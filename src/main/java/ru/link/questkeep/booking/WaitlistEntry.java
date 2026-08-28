@@ -84,8 +84,31 @@ public class WaitlistEntry {
 		if (table == null && gameCopy == null) {
 			throw new DomainException("Waitlist entry must target a table and/or a game copy");
 		}
+		if (table != null && table.isDeleted()) {
+			throw new DomainException("Table is deleted");
+		}
+		if (gameCopy != null && gameCopy.isDeleted()) {
+			throw new DomainException("Game copy is deleted");
+		}
 		TimeSlotRules.validateInterval(startAt, endAt, now);
 		return new WaitlistEntry(UUID.randomUUID(), user, table, gameCopy, startAt, endAt, now);
+	}
+
+	public void cancel() {
+		if (status == WaitlistStatus.CANCELLED) {
+			return;
+		}
+		if (status == WaitlistStatus.FULFILLED) {
+			throw new DomainException("Cannot cancel a fulfilled waitlist entry");
+		}
+		status = WaitlistStatus.CANCELLED;
+	}
+
+	public void fulfill() {
+		if (status != WaitlistStatus.ACTIVE) {
+			throw new DomainException("Only an active waitlist entry can be fulfilled");
+		}
+		status = WaitlistStatus.FULFILLED;
 	}
 
 	public UUID getId() {

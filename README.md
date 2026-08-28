@@ -10,7 +10,7 @@ Swagger: http://localhost:8080/swagger-ui.html (Authorize with Bearer access tok
 
 Demo STAFF (seed): `staff@questkeep.local` / `ChangeMe_Staff_Demo_1` (see `.env.example`).
 
-HTTP samples: [`http/auth.http`](http/auth.http), [`http/catalog.http`](http/catalog.http), [`http/bookings.http`](http/bookings.http).
+HTTP samples: [`http/auth.http`](http/auth.http), [`http/catalog.http`](http/catalog.http), [`http/bookings.http`](http/bookings.http), [`http/waitlist.http`](http/waitlist.http).
 
 ## Stack
 
@@ -83,4 +83,4 @@ Flyway: `src/main/resources/db/migration`. `V1` enables `btree_gist`. `V2` creat
 
 ## MVP limits (current)
 
-No waitlist API yet. CORS allows only localhost / 127.0.0.1.
+No auto-notify on cancel. CORS allows only localhost / 127.0.0.1.

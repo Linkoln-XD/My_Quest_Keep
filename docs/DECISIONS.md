@@ -67,3 +67,10 @@ Format: date, options, choice, why. Both languages.
 - Catalog GET: any authenticated user. Catalog writes: STAFF. Bookings list-all: STAFF.
 - Guest GET/cancel of someone else's booking → **404** (no existence leak).
 
+## 2026-08-28 — Waitlist (step 7)
+
+- GUEST joins waitlist on table and/or copy + interval; duplicate ACTIVE row is reused.
+- STAFF lists ACTIVE entries (oldest first). No email/queue on booking cancel.
+- GUEST/STAFF cancel waitlist; GUEST cancelling someone else's entry → 404.
+- `FULFILLED` exists on the entity for later staff flows; public API does not auto-fulfill.
+

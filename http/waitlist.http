@@ -1,0 +1,26 @@
+@guestToken = Bearer replace-me
+@staffToken = Bearer replace-me
+@tableId = replace-me
+
+### Join waitlist (table)
+POST http://localhost:8080/api/v1/waitlist
+Authorization: {{guestToken}}
+Content-Type: application/json
+
+{
+  "tableId": "{{tableId}}",
+  "startAt": "2026-09-01T12:00:00Z",
+  "endAt": "2026-09-01T14:00:00Z"
+}
+
+### My waitlist
+GET http://localhost:8080/api/v1/waitlist/me
+Authorization: {{guestToken}}
+
+### Staff: active waitlist
+GET http://localhost:8080/api/v1/waitlist?page=0&size=20
+Authorization: {{staffToken}}
+
+### Cancel waitlist entry
+POST http://localhost:8080/api/v1/waitlist/{{entryId}}/cancel
+Authorization: {{guestToken}}
