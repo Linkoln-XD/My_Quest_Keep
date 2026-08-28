@@ -13,6 +13,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import ru.link.questkeep.catalog.ClubTable;
 import ru.link.questkeep.catalog.GameCopy;
 import ru.link.questkeep.identity.User;
@@ -44,6 +47,7 @@ public class Booking {
 	private Instant endAt;
 
 	@Column(name = "guest_count", nullable = false)
+	@JdbcTypeCode(SqlTypes.SMALLINT)
 	private int guestCount;
 
 	@Enumerated(EnumType.STRING)

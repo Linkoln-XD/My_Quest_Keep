@@ -19,7 +19,7 @@ Format: date, options, choice, why. Both languages.
 
 - Public `POST /api/v1/auth/register` → role **GUEST**; **STAFF** via seed.
 - Users table (`id`, `email`, password hash, `role`, `created_at`).
-- JWT: **access 15 min + refresh 7 days** (refresh stored in DB). Implementation in a later step.
+- JWT: **access 15 min + refresh 7 days** (refresh stored as SHA-256 in `refresh_tokens`). Implemented (step 6): rotate on `/auth/refresh`.
 - Why: owner asked to pick a practical JWT shape; table is required for a portfolio.
 
 ## 2026-08-28 — API and packaging
@@ -47,7 +47,7 @@ Format: date, options, choice, why. Both languages.
 
 - Physical table for club tables: **`club_tables`** (avoids SQL `TABLE` confusion). API name remains “table”.
 - Waitlist row statuses: **ACTIVE / FULFILLED / CANCELLED** (staff listing later). A row must reference a table and/or a game copy.
-- **`refresh_tokens`** in `V2` (hash only, not the raw token). JWT wiring still later.
+- **`refresh_tokens`** in `V2` (hash only, not the raw token).
 - FK indexes on booking/waitlist/copy FKs; unique `(user_id, idempotency_key)` where key is present.
 - Soft-delete of catalog with active bookings: **blocked in `CatalogService`** (PENDING/CONFIRMED with `end > now`), not a DB trigger.
 - Adjacent slots do not overlap: `[12:00,14:00)` and `[14:00,16:00)` are allowed.
