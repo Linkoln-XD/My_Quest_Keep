@@ -56,6 +56,21 @@ public class ClubTable {
 		return new ClubTable(UUID.randomUUID(), name.trim(), capacity, now);
 	}
 
+	public void update(String name, int capacity, Instant now) {
+		if (isDeleted()) {
+			throw new DomainException("Table is deleted");
+		}
+		if (name == null || name.isBlank()) {
+			throw new DomainException("Table name is required");
+		}
+		if (capacity < 2 || capacity > 8) {
+			throw new DomainException("Table capacity must be between 2 and 8");
+		}
+		this.name = name.trim();
+		this.capacity = capacity;
+		this.updatedAt = now;
+	}
+
 	public void markDeleted(Instant now) {
 		if (deletedAt == null) {
 			deletedAt = now;

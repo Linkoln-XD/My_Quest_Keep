@@ -9,6 +9,7 @@ import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
 import ru.link.questkeep.AbstractPostgresTest;
 import ru.link.questkeep.catalog.ClubTable;
@@ -21,6 +22,7 @@ import ru.link.questkeep.identity.User;
 import ru.link.questkeep.identity.UserRepository;
 import ru.link.questkeep.shared.exception.DomainException;
 
+@Transactional
 class BookingPersistenceTest extends AbstractPostgresTest {
 
 	@Autowired

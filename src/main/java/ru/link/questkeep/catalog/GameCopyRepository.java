@@ -1,13 +1,18 @@
 package ru.link.questkeep.catalog;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GameCopyRepository extends JpaRepository<GameCopy, UUID> {
 
-	List<GameCopy> findByGameIdAndDeletedAtIsNull(UUID gameId);
+	@EntityGraph(attributePaths = "game")
+	Page<GameCopy> findByGameIdAndDeletedAtIsNull(UUID gameId, Pageable pageable);
 
-	List<GameCopy> findByDeletedAtIsNull();
+	@EntityGraph(attributePaths = "game")
+	Optional<GameCopy> findByIdAndDeletedAtIsNull(UUID id);
 }

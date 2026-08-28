@@ -35,6 +35,9 @@ services:
       DATABASE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-questkeep}
       DATABASE_USERNAME: ${POSTGRES_USER:-questkeep}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-questkeep}
+      JWT_SECRET: ${JWT_SECRET:-change-me-to-a-long-random-string-at-least-32-chars}
+      STAFF_EMAIL: ${STAFF_EMAIL:-staff@questkeep.local}
+      STAFF_PASSWORD: ${STAFF_PASSWORD:-ChangeMe_Staff_Demo_1}
     depends_on:
       db:
         condition: service_healthy

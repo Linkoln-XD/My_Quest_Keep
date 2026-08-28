@@ -49,6 +49,17 @@ public class Game {
 		return new Game(UUID.randomUUID(), title.trim(), now);
 	}
 
+	public void updateTitle(String title, Instant now) {
+		if (isDeleted()) {
+			throw new DomainException("Game is deleted");
+		}
+		if (title == null || title.isBlank()) {
+			throw new DomainException("Game title is required");
+		}
+		this.title = title.trim();
+		this.updatedAt = now;
+	}
+
 	public void markDeleted(Instant now) {
 		if (deletedAt == null) {
 			deletedAt = now;

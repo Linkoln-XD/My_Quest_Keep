@@ -49,5 +49,21 @@ Format: date, options, choice, why. Both languages.
 - Waitlist row statuses: **ACTIVE / FULFILLED / CANCELLED** (staff listing later). A row must reference a table and/or a game copy.
 - **`refresh_tokens`** in `V2` (hash only, not the raw token). JWT wiring still later.
 - FK indexes on booking/waitlist/copy FKs; unique `(user_id, idempotency_key)` where key is present.
-- Soft-delete of catalog with active bookings: **blocked in the service** (step 5/7), not a DB trigger.
+- Soft-delete of catalog with active bookings: **blocked in `CatalogService`** (PENDING/CONFIRMED with `end > now`), not a DB trigger.
 - Adjacent slots do not overlap: `[12:00,14:00)` and `[14:00,16:00)` are allowed.
+
+## 2026-08-28 — Booking use-cases (step 5)
+
+- Create/cancel run in a transaction; insert uses **REQUIRES_NEW** so an exclusion/unique failure does not poison the outer session.
+- PostgreSQL `23P01` → `BookingConflictException` (HTTP 409 in step 6). Unique `23505` on idempotency key → return the existing row.
+- **Idempotency-Key is required** on create. Same user + same key + same payload → same booking. Same key + different payload → domain error.
+- Insert is a separate component (`BookingWriter`) so Spring AOP can apply `REQUIRES_NEW` (no self-invocation).
+- Concurrent inserts can deadlock on two GiST exclusion constraints (`40P01`); the writer **retries** a few times, then maps a remaining exclusion to conflict.
+
+## 2026-08-28 — Security and HTTP (step 6)
+
+- JWT access 15 min + refresh 7 days; refresh stored as SHA-256 hex; refresh **rotated** on use.
+- CORS: **localhost / 127.0.0.1 only** (`http://localhost:*`, `http://127.0.0.1:*`).
+- Catalog GET: any authenticated user. Catalog writes: STAFF. Bookings list-all: STAFF.
+- Guest GET/cancel of someone else's booking → **404** (no existence leak).
+

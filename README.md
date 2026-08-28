@@ -4,7 +4,13 @@ EN: REST API for booking a **table** and a **specific game copy** together at a 
 
 RU: REST API для одновременной брони **стола** и **конкретной копии игры** в настольном клубе.
 
-Status: **skeleton (step 3)** — Spring Boot + PostgreSQL + Flyway + Docker Compose. Domain, JWT, and booking endpoints are not implemented yet.
+Status: **API (step 6)** — JWT auth, catalog, bookings. Waitlist staff UX is next.
+
+Swagger: http://localhost:8080/swagger-ui.html (Authorize with Bearer access token).
+
+Demo STAFF (seed): `staff@questkeep.local` / `ChangeMe_Staff_Demo_1` (see `.env.example`).
+
+HTTP samples: [`http/auth.http`](http/auth.http), [`http/catalog.http`](http/catalog.http), [`http/bookings.http`](http/bookings.http).
 
 ## Stack
 
@@ -77,4 +83,4 @@ Flyway: `src/main/resources/db/migration`. `V1` enables `btree_gist`. `V2` creat
 
 ## MVP limits (current)
 
-No registration, bookings, catalog, or JWT yet. Security allows all HTTP requests so Swagger works; this will change.
+No waitlist API yet. CORS allows only localhost / 127.0.0.1.

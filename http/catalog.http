@@ -1,0 +1,29 @@
+@staffToken = Bearer replace-me
+@gameId = replace-me
+
+### Create table (STAFF)
+POST http://localhost:8080/api/v1/tables
+Authorization: {{staffToken}}
+Content-Type: application/json
+
+{
+  "name": "Oak",
+  "capacity": 4
+}
+
+### List tables
+GET http://localhost:8080/api/v1/tables?page=0&size=20
+Authorization: {{staffToken}}
+
+### Create game (STAFF)
+POST http://localhost:8080/api/v1/games
+Authorization: {{staffToken}}
+Content-Type: application/json
+
+{
+  "title": "Catan"
+}
+
+### Add copy (STAFF)
+POST http://localhost:8080/api/v1/games/{{gameId}}/copies
+Authorization: {{staffToken}}

@@ -110,6 +110,9 @@ public class Booking {
 		if (gameCopy.isDeleted()) {
 			throw new DomainException("Game copy is deleted");
 		}
+		if (gameCopy.getGame().isDeleted()) {
+			throw new DomainException("Game is deleted");
+		}
 		TimeSlotRules.validateInterval(startAt, endAt, now);
 		if (guestCount < 1) {
 			throw new DomainException("Guest count must be at least 1");

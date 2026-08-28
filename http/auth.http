@@ -1,0 +1,34 @@
+### Register guest
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "email": "guest@example.com",
+  "password": "password1"
+}
+
+### Login guest
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "guest@example.com",
+  "password": "password1"
+}
+
+### Login staff (seed)
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "staff@questkeep.local",
+  "password": "ChangeMe_Staff_Demo_1"
+}
+
+### Refresh
+POST http://localhost:8080/api/v1/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
