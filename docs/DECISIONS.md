@@ -67,6 +67,12 @@ Format: date, options, choice, why. Both languages.
 - Catalog GET: any authenticated user. Catalog writes: STAFF. Bookings list-all: STAFF.
 - Guest GET/cancel of someone else's booking → **404** (no existence leak).
 
+## 2026-08-28 — GitHub Actions CI
+
+- Options: no CI / tests-only workflow / tests + CodeQL/deploy.
+- Choice: **tests-only** workflow `.github/workflows/ci.yml` on `main`, pull requests, and `workflow_dispatch`.
+- Why: Testcontainers needs Docker; GitHub-hosted `ubuntu-latest` provides it. Same Maven Wrapper + JDK 21 as the Dockerfile. No deploy, no security scanning (still out of scope).
+
 ## 2026-08-28 — Waitlist (step 7)
 
 - GUEST joins waitlist on table and/or copy + interval; duplicate ACTIVE row is reused.

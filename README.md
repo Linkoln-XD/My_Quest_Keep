@@ -1,5 +1,7 @@
 # QuestKeep
 
+[![CI](https://github.com/Linkoln-XD/My_Quest_Keep/actions/workflows/ci.yml/badge.svg)](https://github.com/Linkoln-XD/My_Quest_Keep/actions/workflows/ci.yml)
+
 **EN:** REST API for a tabletop club: a guest books a **table** and a **specific game copy** in one reservation.
 
 **RU:** REST API настольного клуба: гость бронирует **стол** и **конкретную копию игры** одной бронью.
@@ -55,11 +57,17 @@ Spring Boot does **not** auto-load `.env`. Defaults in `application.properties` 
 
 ## Tests
 
-Docker is required (Testcontainers):
+Docker is required (Testcontainers PostgreSQL 16). Same command locally and in CI:
 
 ```bash
 ./mvnw test
 ```
+
+**CI:** GitHub Actions (`.github/workflows/ci.yml`) runs `./mvnw -B verify` on every push to `main`, every pull request, and on manual **Run workflow**. Image: `ubuntu-latest`, Temurin **21**, Maven Wrapper, Docker for Testcontainers. Failed runs attach `target/surefire-reports/`.
+
+**EN:** Host JDK must be 21 if you run Maven outside Compose. CI always uses 21.
+
+**RU:** Локально для Maven нужен JDK 21; в CI он фиксирован.
 
 ## curl examples
 
@@ -124,6 +132,6 @@ docker compose logs app
 
 ## MVP limits / Ограничения MVP
 
-**EN:** No payments, discounts, email, queues, GitHub Actions, or frontend. Booking create is immediately `CONFIRMED` (no STAFF confirm). Waitlist is stored only; cancel does not notify. `EXPIRED` is applied on read. CORS is localhost only. `PENDING` and waitlist `FULFILLED` are not used on the public happy path.
+**EN:** No payments, discounts, email, queues, or frontend. Booking create is immediately `CONFIRMED` (no STAFF confirm). Waitlist is stored only; cancel does not notify. `EXPIRED` is applied on read. CORS is localhost only. `PENDING` and waitlist `FULFILLED` are not used on the public happy path.
 
-**RU:** Нет оплаты, скидок, почты, очередей, GitHub Actions и фронтенда. Бронь сразу `CONFIRMED`. Лист ожидания только в БД, отмена никого не уведомляет. `EXPIRED` ставится при чтении. CORS только localhost. `PENDING` и `FULFILLED` на публичном happy-path не используются.
+**RU:** Нет оплаты, скидок, почты, очередей и фронтенда. Бронь сразу `CONFIRMED`. Лист ожидания только в БД, отмена никого не уведомляет. `EXPIRED` ставится при чтении. CORS только localhost. `PENDING` и `FULFILLED` на публичном happy-path не используются.

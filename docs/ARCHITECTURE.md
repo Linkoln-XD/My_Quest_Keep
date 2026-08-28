@@ -21,6 +21,8 @@ Compose names: `questkeep-app`, `questkeep-db`, `questkeep-adminer`.
 
 The app runs Flyway on startup, then Hibernate `validate`. JVM 21.
 
+CI (GitHub Actions) does not start Compose. It runs `./mvnw verify` on Temurin 21; tests boot PostgreSQL **16** via Testcontainers (`postgres:16-alpine`).
+
 ## Application layers
 
 Packages are **by feature**, not by technical layer.
