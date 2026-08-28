@@ -13,9 +13,9 @@
 
 ## Threats we accept / accept as residual
 
-**EN:** Stolen demo JWT secret, brute-force login (no rate limit), XSS if a future frontend is sloppy (API is JSON), Adminer exposed on localhost, no HTTPS in Compose, no account lockout, seed STAFF created if email missing.
+**EN:** Stolen demo JWT secret, brute-force login (no rate limit), XSS if the demo UI is sloppy (tokens in sessionStorage), Adminer exposed on localhost, no HTTPS in Compose, no account lockout, seed STAFF created if email missing.
 
-**RU:** Украденный демо-секрет JWT, перебор пароля без лимита, Adminer на localhost, нет TLS в Compose, нет блокировки аккаунта.
+**RU:** Украденный демо-секрет JWT, перебор пароля без лимита, XSS в демо-UI (токены в sessionStorage), Adminer на localhost, нет TLS в Compose, нет блокировки аккаунта.
 
 ## Consciously not done
 

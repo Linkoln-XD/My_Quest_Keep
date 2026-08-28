@@ -47,6 +47,37 @@ class BookingServiceTest extends AbstractPostgresTest {
 	@Autowired
 	private GameCopyRepository copies;
 
+	@Autowired
+	private org.springframework.jdbc.core.JdbcTemplate jdbc;
+
+	@Autowired
+	private jakarta.persistence.EntityManager entityManager;
+
+	@Test
+	void sameIdempotencyKeyDifferentPayloadIsRejected() {
+		CatalogFixture fixture = catalog("idem-diff");
+		bookings.create(fixture.guest.getId(), fixture.table.getId(), fixture.copy.getId(), START, END, 2, "diff-key");
+		GameCopy otherCopy = copies.save(GameCopy.create(fixture.game, TEST_NOW));
+		assertThatThrownBy(() -> bookings.create(
+				fixture.guest.getId(), fixture.table.getId(), otherCopy.getId(), START, END, 2, "diff-key"))
+				.isInstanceOf(DomainException.class)
+				.hasMessageContaining("Idempotency-Key");
+	}
+
+	@Test
+	void getExpiresBookingWhenIntervalHasEnded() {
+		CatalogFixture fixture = catalog("expire-read");
+		Booking created = bookings.create(
+				fixture.guest.getId(), fixture.table.getId(), fixture.copy.getId(), START, END, 2, "expire-key");
+		jdbc.update(
+				"update bookings set start_at = ?, end_at = ? where id = ?",
+				java.sql.Timestamp.from(TEST_NOW.minusSeconds(7200)),
+				java.sql.Timestamp.from(TEST_NOW),
+				created.getId());
+		entityManager.clear();
+		assertThat(bookings.get(created.getId()).getStatus()).isEqualTo(BookingStatus.EXPIRED);
+	}
+
 	@Test
 	void secondBookingOnSameTableAndOverlappingIntervalConflicts() {
 		CatalogFixture fixture = catalog("table-conflict");

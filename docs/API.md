@@ -1,6 +1,6 @@
 # API
 
-Machine-readable contract: http://localhost:8080/v3/api-docs · UI: `/swagger-ui.html`.
+Machine-readable contract: http://localhost:8080/v3/api-docs · UI: `/swagger-ui.html`. Demo SPA (Compose): http://localhost:8080.
 
 Base path: `/api/v1`. JSON. Errors: Problem Details (`application/problem+json` when the handler runs): `type`, `title`, `status`, `detail`.
 

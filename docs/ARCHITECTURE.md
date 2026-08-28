@@ -2,22 +2,21 @@
 
 ## Context (C4 level 1)
 
-**EN:** QuestKeep is a single Spring Boot process. Guests and staff call HTTP JSON. PostgreSQL stores users, catalog, bookings, waitlist, and refresh-token hashes. Adminer is optional for inspecting the DB. There is no browser SPA in this repo.
+**EN:** QuestKeep is a single Spring Boot process plus a **demo React UI**. Guests and staff call HTTP JSON. PostgreSQL stores users, catalog, bookings, waitlist, and refresh-token hashes. Adminer is optional for inspecting the DB.
 
-**RU:** Один процесс Spring Boot. Гости и персонал ходят в HTTP JSON. PostgreSQL хранит пользователей, каталог, брони, лист ожидания и хеши refresh. Adminer — опционально. SPA в репозитории нет.
+**RU:** Один процесс Spring Boot и демо-SPA на React. Гости и персонал ходят в HTTP JSON. PostgreSQL хранит пользователей, каталог, брони, лист ожидания и хеши refresh. Adminer — опционально.
 
 ```
-[Guest / Staff HTTP client]
-        |
-        v
-[QuestKeep API :8080] ---- [PostgreSQL :5432 in Compose network]
-        |                         (host mapping: POSTGRES_PORT, default 5433)
+[Guest / Staff — React demo :8080] --nginx /api--> [QuestKeep API inside Compose] ---- [PostgreSQL :5432 in Compose network]
+        |                                                         (host mapping: POSTGRES_PORT, default 5433)
         +---- [Adminer :8081] (Compose only, talks to Postgres as host `db`)
 ```
 
 ## Containers (C4 level 2)
 
-Compose names: `questkeep-app`, `questkeep-db`, `questkeep-adminer`.
+Compose names: `questkeep-app`, `questkeep-db`, `questkeep-adminer`, `questkeep-web` (React demo). Host **8080** is nginx: SPA + proxy to the API. Java is not published on the host.
+
+The React app in `frontend/` talks only to `/api/v1`. Vite `npm run dev` proxies to `localhost:8080` (use Maven API, not the `web` container). Tokens stay in **sessionStorage** (one person per browser tab).
 
 The app runs Flyway on startup, then Hibernate `validate`. JVM 21.
 

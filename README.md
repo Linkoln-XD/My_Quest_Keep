@@ -8,7 +8,7 @@
 
 | | |
 |---|---|
-| Stack | Java 21, Spring Boot 4.1.1, PostgreSQL 16, Flyway, Maven |
+| Stack | Java 21, Spring Boot 4.1.1, PostgreSQL 16, Flyway, Maven; React (Vite) demo UI |
 | Auth | JWT access 15 min + refresh 7 days; public guest register; STAFF seed |
 | Docs | [ARCHITECTURE](docs/ARCHITECTURE.md) · [API](docs/API.md) · [DOMAIN](docs/DOMAIN.md) · [DATA](docs/DATA.md) · [SECURITY](docs/SECURITY.md) · [DECISIONS](docs/DECISIONS.md) |
 
@@ -21,7 +21,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-First image build downloads Maven dependencies inside Docker (several minutes). Wait until `questkeep-app` logs `Started QuestkeepApplication`.
+Wait until `questkeep-web` is Up. Open **http://localhost:8080** — that is the React UI. `/api` and Swagger go through the same port (nginx → Spring). Two guests = two tabs (`sessionStorage`).
 
 **EN:** If Compose stays in `Created` and never becomes `healthy`/`Up`, port **5432** is almost always already bound (another Postgres container or a local server). The default in `.env.example` maps Postgres to **5433** on the host. App ↔ DB inside Compose still uses hostname `db` and port **5432**.
 
@@ -29,7 +29,7 @@ First image build downloads Maven dependencies inside Docker (several minutes). 
 
 | Service | URL |
 |---|---|
-| API | http://localhost:8080 |
+| Demo UI + API | http://localhost:8080 |
 | Swagger UI | http://localhost:8080/swagger-ui.html |
 | OpenAPI JSON | http://localhost:8080/v3/api-docs |
 | Adminer | http://localhost:8081 |
@@ -55,6 +55,22 @@ docker compose up db adminer
 
 Spring Boot does **not** auto-load `.env`. Defaults in `application.properties` match `.env.example` (`localhost:5433`). If you change `POSTGRES_PORT`, set `DATABASE_URL` in the IDE run config (or export it) to the same host port. Do not use hostname `db` outside Compose — it exists only on the Docker network.
 
+## Demo UI (React)
+
+Compose: **http://localhost:8080** (nginx serves the SPA and proxies `/api`).
+
+Hot reload without the `web` container — API on 8080 via Maven, then:
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+Vite is http://localhost:5173 and proxies `/api` to `http://127.0.0.1:8080`. STAFF: `staff@questkeep.local` / `ChangeMe_Staff_Demo_1`.
+
+On the home screen: log in as staff → **Завести Oak + Catan + копию** → register a guest in another tab → book the same slot twice to see **409**.
+
 ## Tests
 
 Docker is required (Testcontainers PostgreSQL 16). Same command locally and in CI:
@@ -63,7 +79,7 @@ Docker is required (Testcontainers PostgreSQL 16). Same command locally and in C
 ./mvnw test
 ```
 
-**CI:** GitHub Actions (`.github/workflows/ci.yml`) runs `./mvnw -B verify` on every push to `main`, every pull request, and on manual **Run workflow**. Image: `ubuntu-latest`, Temurin **21**, Maven Wrapper, Docker for Testcontainers. Failed runs attach `target/surefire-reports/`.
+**CI:** GitHub Actions (`.github/workflows/ci.yml`) runs `./mvnw -B verify` and `frontend` `npm ci && npm run build` on every push to `main`, every pull request, and on manual **Run workflow**.
 
 **EN:** Host JDK must be 21 if you run Maven outside Compose. CI always uses 21.
 
@@ -100,7 +116,7 @@ Copy [`.env.example`](.env.example) to `.env`. Do not commit `.env`. Values are 
 
 | Variable | Meaning |
 |---|---|
-| `SERVER_PORT` | Host port for the API (Compose) |
+| `SERVER_PORT` | Public Compose URL: React UI + `/api` (nginx, default 8080) |
 | `POSTGRES_DB` / `USER` / `PASSWORD` / `PORT` | Postgres; `PORT` is the **host** mapping (default 5433) |
 | `DATABASE_URL` / `USERNAME` / `PASSWORD` | JDBC for local Maven (`localhost` + `POSTGRES_PORT`) |
 | `ADMINER_PORT` | Adminer host port |
@@ -132,6 +148,6 @@ docker compose logs app
 
 ## MVP limits / Ограничения MVP
 
-**EN:** No payments, discounts, email, queues, or frontend. Booking create is immediately `CONFIRMED` (no STAFF confirm). Waitlist is stored only; cancel does not notify. `EXPIRED` is applied on read. CORS is localhost only. `PENDING` and waitlist `FULFILLED` are not used on the public happy path.
+**EN:** No payments, discounts, email, or queues. Booking create is immediately `CONFIRMED` (no STAFF confirm). Waitlist is stored only; cancel does not notify. `EXPIRED` is applied on read. CORS is localhost only. `PENDING` and waitlist `FULFILLED` are not used on the public happy path. The React UI is a demo client, not a production spa (no i18n, no design system).
 
-**RU:** Нет оплаты, скидок, почты, очередей и фронтенда. Бронь сразу `CONFIRMED`. Лист ожидания только в БД, отмена никого не уведомляет. `EXPIRED` ставится при чтении. CORS только localhost. `PENDING` и `FULFILLED` на публичном happy-path не используются.
+**RU:** Нет оплаты, скидок, почты и очередей. Бронь сразу `CONFIRMED`. Лист ожидания только в БД, отмена никого не уведомляет. `EXPIRED` ставится при чтении. CORS только localhost. `PENDING` и `FULFILLED` на публичном happy-path не используются. React — демо-клиент, не прод.

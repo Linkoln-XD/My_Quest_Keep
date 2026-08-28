@@ -111,6 +111,24 @@ class BookingPersistenceTest extends AbstractPostgresTest {
 		assertThat(booking.getStatus()).isEqualTo(BookingStatus.CANCELLED);
 	}
 
+	@Test
+	void adjacentHalfOpenSlotsOnSameTableAreAllowed() {
+		Instant now = Instant.parse("2026-08-28T10:00:00Z");
+		Instant noon = Instant.parse("2026-08-28T12:00:00Z");
+		Instant two = Instant.parse("2026-08-28T14:00:00Z");
+		Instant four = Instant.parse("2026-08-28T16:00:00Z");
+
+		User guest = users.save(User.registerGuest("adjacent@example.com", "hash-placeholder", now));
+		ClubTable table = tables.save(ClubTable.create("Walnut", 4, now));
+		Game game = games.save(Game.create("Wingspan", now));
+		GameCopy copyA = copies.save(GameCopy.create(game, now));
+		GameCopy copyB = copies.save(GameCopy.create(game, now));
+
+		bookings.saveAndFlush(Booking.confirmNew(table, copyA, guest, noon, two, 2, "adj-a", now));
+		Booking next = Booking.confirmNew(table, copyB, guest, two, four, 2, "adj-b", now);
+		assertThat(bookings.saveAndFlush(next).getId()).isNotNull();
+	}
+
 	private Booking persistConfirmed(Instant now) {
 		User guest = users.save(User.registerGuest("cancel@example.com", "hash-placeholder", now));
 		ClubTable table = tables.save(ClubTable.create("Cedar", 4, now));

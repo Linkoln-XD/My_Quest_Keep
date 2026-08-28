@@ -29,8 +29,8 @@ services:
   app:
     build: .
     container_name: questkeep-app
-    ports:
-      - "${SERVER_PORT:-8080}:8080"
+    expose:
+      - "8080"
     environment:
       SERVER_PORT: 8080
       DATABASE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-questkeep}
@@ -43,6 +43,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  web:
+    build: ./frontend
+    container_name: questkeep-web
+    ports:
+      - "${SERVER_PORT:-8080}:80"
+    restart: unless-stopped
+    depends_on:
+      - app
 
 volumes:
   questkeep-db-data:
