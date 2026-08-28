@@ -1,0 +1,11 @@
+.git
+.idea
+.vscode
+target
+*.iml
+.DS_Store
+.env
+http
+docs
+README.md
+LICENSE

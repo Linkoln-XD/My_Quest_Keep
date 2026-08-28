@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: questkeep-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-questkeep}
+      POSTGRES_USER: ${POSTGRES_USER:-questkeep}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-questkeep}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - questkeep-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-questkeep} -d ${POSTGRES_DB:-questkeep}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  adminer:
+    image: adminer:4
+    container_name: questkeep-adminer
+    ports:
+      - "${ADMINER_PORT:-8081}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    build: .
+    container_name: questkeep-app
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    environment:
+      SERVER_PORT: 8080
+      DATABASE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-questkeep}
+      DATABASE_USERNAME: ${POSTGRES_USER:-questkeep}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-questkeep}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  questkeep-db-data:
